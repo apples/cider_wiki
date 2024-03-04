@@ -1,0 +1,22 @@
+
+Welcome to    [rainbow][tornado]TEST PAGE![/tornado][/rainbow]
+
+Test page is [b]great[/b], [i]fantastic[/i], and even [i][b]phenomenal[/b][/i]!
+
+You can make links to other pages such as [[page:Sibling Page]] and [[page:>Sub Page]]!
+
+Links can also point to scenes such as [url=res://addons/cider_wiki/wiki_tab.tscn]wiki_tab.tscn[/url], and scripts such as [url=res://addons/cider_wiki/wiki_tab.gd#open_page]wiki_tag.gd#open_page[/url].
+
+We got code blocks:
+[code]
+func horse():
+	return 42
+[/code]
+
+We got images:
+
+[img]res://icon.svg[/img]
+
+And we even got some embedded images!
+
+[[img:img_1.png]]

@@ -1,0 +1,40 @@
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://vn685as2raec"]
+
+[ext_resource type="SystemFont" uid="uid://8qbeft7gpdu" path="res://addons/cider_wiki/document_font.tres" id="1_hs255"]
+[ext_resource type="SystemFont" uid="uid://cylrf18mkqukw" path="res://addons/cider_wiki/document_font_mono.tres" id="2_u31ti"]
+
+[sub_resource type="FontVariation" id="FontVariation_cnmbl"]
+base_font = ExtResource("1_hs255")
+variation_embolden = 1.0
+spacing_top = -1
+spacing_bottom = -1
+
+[sub_resource type="FontVariation" id="FontVariation_th7i5"]
+base_font = ExtResource("1_hs255")
+variation_embolden = 1.0
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+spacing_top = -1
+spacing_bottom = -1
+
+[sub_resource type="FontVariation" id="FontVariation_ekvoi"]
+base_font = ExtResource("1_hs255")
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+spacing_top = -1
+spacing_bottom = -1
+
+[sub_resource type="FontVariation" id="FontVariation_d7hcr"]
+base_font = ExtResource("1_hs255")
+spacing_top = -1
+spacing_bottom = -1
+
+[resource]
+DocumentMarginContainer/base_type = &"MarginContainer"
+DocumentMarginContainer/constants/margin_bottom = 4
+DocumentMarginContainer/constants/margin_left = 32
+DocumentMarginContainer/constants/margin_right = 112
+DocumentMarginContainer/constants/margin_top = 4
+RichTextLabel/fonts/bold_font = SubResource("FontVariation_cnmbl")
+RichTextLabel/fonts/bold_italics_font = SubResource("FontVariation_th7i5")
+RichTextLabel/fonts/italics_font = SubResource("FontVariation_ekvoi")
+RichTextLabel/fonts/mono_font = ExtResource("2_u31ti")
+RichTextLabel/fonts/normal_font = SubResource("FontVariation_d7hcr")
