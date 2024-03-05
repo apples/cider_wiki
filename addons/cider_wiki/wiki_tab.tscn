@@ -330,6 +330,7 @@ Continue?"
 [connection signal="pressed" from="Splitter/FileTreeContainer/CreatePageButton" to="." method="_on_create_page_button_pressed"]
 [connection signal="pressed" from="Splitter/FileTreeContainer/CreateChildPageButton" to="." method="_on_create_child_page_button_pressed"]
 [connection signal="item_activated" from="Splitter/FileTreeContainer/FileTree" to="." method="_on_file_tree_item_activated"]
+[connection signal="item_moved" from="Splitter/FileTreeContainer/FileTree" to="." method="_on_file_tree_item_moved"]
 [connection signal="text_changed" from="Splitter/DocumentContainer/Search/SearchBar/SearchLineEdit" to="Splitter/DocumentContainer/Search" method="_on_search_line_edit_text_changed"]
 [connection signal="text_submitted" from="Splitter/DocumentContainer/Search/SearchBar/SearchLineEdit" to="Splitter/DocumentContainer/Search" method="_on_search_line_edit_text_submitted"]
 [connection signal="popup_hide" from="Splitter/DocumentContainer/Search/SearchPopupPanel" to="Splitter/DocumentContainer/Search" method="_on_search_popup_panel_popup_hide"]

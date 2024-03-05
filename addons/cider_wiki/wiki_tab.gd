@@ -186,6 +186,7 @@ func rescan_page_files() -> void:
 	var root := Page.new()
 	root.path = "/"
 	root.tree_item = file_tree.create_item()
+	root.tree_item.set_metadata(0, "/")
 	page_collection["/"] = root
 	
 	var scan_queue := [root]
@@ -207,7 +208,7 @@ func rescan_page_files() -> void:
 			page_collection[page_path] = page
 			scan_queue.append(page)
 	
-	if current_page.path in page_collection:
+	if current_page and current_page.path in page_collection:
 		open_page(current_page.path)
 	else:
 		reset_views()
@@ -264,6 +265,24 @@ func _on_file_tree_item_activated() -> void:
 	var selected_page_path: String = file_tree.get_selected().get_metadata(0)
 	assert(selected_page_path)
 	open_page(selected_page_path)
+
+func _on_file_tree_item_moved(item: TreeItem, target: TreeItem) -> void:
+	var item_page_path := str(item.get_metadata(0))
+	var dest_page_path := str(target.get_metadata(0)).path_join(item_page_path.get_file())
+	var dir := get_page_dir(item_page_path)
+	var dest_dir := get_page_dir(dest_page_path)
+	if DirAccess.dir_exists_absolute(dest_dir):
+		printerr("Cannot move page, destination dir already exists: %s => %s" % [dir, dest_dir])
+		return
+	if FileAccess.file_exists(dest_dir):
+		printerr("Cannot move page, file with same name exists at destination: %s => %s" % [dir, dest_dir])
+		return
+	var err := DirAccess.rename_absolute(dir, dest_dir)
+	if err != OK:
+		printerr("Failed to move page: %s (%s => %s)" % [error_string(err), dir, dest_dir])
+		return
+	rescan_page_files()
+	open_page(dest_page_path)
 
 #endregion
 
