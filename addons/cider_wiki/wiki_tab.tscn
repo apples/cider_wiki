@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cwik24430m7o8"]
+[gd_scene load_steps=17 format=3 uid="uid://cwik24430m7o8"]
 
 [ext_resource type="Script" path="res://addons/cider_wiki/wiki_tab.gd" id="1_0r4nw"]
 [ext_resource type="Theme" uid="uid://vn685as2raec" path="res://addons/cider_wiki/cider_theme.tres" id="1_rghra"]
@@ -10,7 +10,6 @@
 [ext_resource type="Texture2D" uid="uid://cu128yd18oopc" path="res://addons/cider_wiki/icons/icon_edit.svg" id="5_vff41"]
 [ext_resource type="Script" path="res://addons/cider_wiki/search.gd" id="6_2qqxh"]
 [ext_resource type="Script" path="res://addons/cider_wiki/code_edit.gd" id="6_6krtk"]
-[ext_resource type="Texture2D" uid="uid://clpvdovipfmqb" path="res://addons/cider_wiki/icons/icon_delete.svg" id="6_nel21"]
 [ext_resource type="Texture2D" uid="uid://0emc4p7m7kmc" path="res://addons/cider_wiki/icons/icon_save.svg" id="8_njsno"]
 [ext_resource type="Texture2D" uid="uid://ce1rsxmc5h5mq" path="res://addons/cider_wiki/icons/icon_cancel.svg" id="9_mhjoc"]
 [ext_resource type="Texture2D" uid="uid://deqrmlvsuqmm3" path="res://addons/cider_wiki/icons/icon_help.svg" id="10_dtosf"]
@@ -68,8 +67,17 @@ icon = ExtResource("4_hbril")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+auto_translate = false
+allow_rmb_select = true
 hide_root = true
 script = ExtResource("5_qv0ui")
+
+[node name="PopupMenu" type="PopupMenu" parent="Splitter/FileTreeContainer/FileTree"]
+item_count = 2
+item_0/text = "Rename"
+item_0/id = 0
+item_1/text = "Delete"
+item_1/id = 1
 
 [node name="DocumentContainer" type="VBoxContainer" parent="Splitter"]
 layout_mode = 2
@@ -90,6 +98,7 @@ clear_button_enabled = true
 
 [node name="RegexFlagButton" type="Button" parent="Splitter/DocumentContainer/Search/SearchBar"]
 layout_mode = 2
+tooltip_text = "Enables RegEx in the search bar."
 toggle_mode = true
 text = ".*"
 
@@ -101,8 +110,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -4.0
+offset_right = -416.0
+offset_bottom = -416.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -169,12 +178,6 @@ tooltip_text = "Edit the current page."
 text = "Edit Page"
 icon = ExtResource("5_vff41")
 
-[node name="DeletePageButton" type="Button" parent="Splitter/DocumentContainer/Document/RenderedView/Buttons"]
-layout_mode = 2
-size_flags_horizontal = 8
-tooltip_text = "Delete the current page."
-icon = ExtResource("6_nel21")
-
 [node name="EditView" type="PanelContainer" parent="Splitter/DocumentContainer/Document"]
 unique_name_in_owner = true
 visible = false
@@ -187,6 +190,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+auto_translate = false
 placeholder_text = "BBCode"
 scroll_smooth = true
 caret_blink = true
@@ -219,7 +223,7 @@ icon = ExtResource("9_mhjoc")
 [node name="HelpEditButton" type="Button" parent="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 8
-tooltip_text = "Discard changes."
+tooltip_text = "Show help."
 icon = ExtResource("10_dtosf")
 
 [node name="HelpOverlay" type="CenterContainer" parent="Splitter/DocumentContainer/Document"]
@@ -285,10 +289,12 @@ offset_bottom = 128.0
 
 [node name="PathLabel" type="Label" parent="CreatePageDialog/Form"]
 layout_mode = 2
+auto_translate = false
 text = "/"
 
 [node name="PageNameLineEdit" type="LineEdit" parent="CreatePageDialog/Form"]
 layout_mode = 2
+auto_translate = false
 placeholder_text = "Page Name"
 
 [node name="ErrorLabel" type="Label" parent="CreatePageDialog/Form"]
@@ -311,11 +317,11 @@ offset_bottom = 58.0
 
 [node name="PathLabel" type="Label" parent="DeletePageDialog/Form"]
 layout_mode = 2
+auto_translate = false
 text = "/"
 
 [node name="WarningLabel" type="Label" parent="DeletePageDialog/Form"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.980392, 0, 0.207843, 1)
 text = "All sub-Pages and related assets will also be deleted!"
 
 [node name="ConfirmUnsavedChangesDialog" type="ConfirmationDialog" parent="."]
@@ -329,8 +335,12 @@ Continue?"
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
 [connection signal="pressed" from="Splitter/FileTreeContainer/CreatePageButton" to="." method="_on_create_page_button_pressed"]
 [connection signal="pressed" from="Splitter/FileTreeContainer/CreateChildPageButton" to="." method="_on_create_child_page_button_pressed"]
+[connection signal="delete_requested" from="Splitter/FileTreeContainer/FileTree" to="." method="_on_file_tree_delete_requested"]
 [connection signal="item_activated" from="Splitter/FileTreeContainer/FileTree" to="." method="_on_file_tree_item_activated"]
+[connection signal="item_edited" from="Splitter/FileTreeContainer/FileTree" to="." method="_on_file_tree_item_edited"]
+[connection signal="item_mouse_selected" from="Splitter/FileTreeContainer/FileTree" to="Splitter/FileTreeContainer/FileTree" method="_on_item_mouse_selected"]
 [connection signal="item_moved" from="Splitter/FileTreeContainer/FileTree" to="." method="_on_file_tree_item_moved"]
+[connection signal="id_pressed" from="Splitter/FileTreeContainer/FileTree/PopupMenu" to="Splitter/FileTreeContainer/FileTree" method="_on_popup_menu_id_pressed"]
 [connection signal="text_changed" from="Splitter/DocumentContainer/Search/SearchBar/SearchLineEdit" to="Splitter/DocumentContainer/Search" method="_on_search_line_edit_text_changed"]
 [connection signal="text_submitted" from="Splitter/DocumentContainer/Search/SearchBar/SearchLineEdit" to="Splitter/DocumentContainer/Search" method="_on_search_line_edit_text_submitted"]
 [connection signal="popup_hide" from="Splitter/DocumentContainer/Search/SearchPopupPanel" to="Splitter/DocumentContainer/Search" method="_on_search_popup_panel_popup_hide"]
@@ -339,7 +349,6 @@ Continue?"
 [connection signal="meta_hover_ended" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_hover_ended"]
 [connection signal="meta_hover_started" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_hover_started"]
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/RenderedView/Buttons/EditPageButton" to="." method="_on_edit_page_button_pressed"]
-[connection signal="pressed" from="Splitter/DocumentContainer/Document/RenderedView/Buttons/DeletePageButton" to="." method="_on_delete_page_button_pressed"]
 [connection signal="text_changed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_changed"]
 [connection signal="text_set" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_set"]
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons/SaveEditButton" to="." method="_on_save_edit_button_pressed"]

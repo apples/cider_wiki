@@ -269,20 +269,63 @@ func _on_file_tree_item_activated() -> void:
 func _on_file_tree_item_moved(item: TreeItem, target: TreeItem) -> void:
 	var item_page_path := str(item.get_metadata(0))
 	var dest_page_path := str(target.get_metadata(0)).path_join(item_page_path.get_file())
-	var dir := get_page_dir(item_page_path)
+	if _move_page(item_page_path, dest_page_path):
+		rescan_page_files()
+		open_page(dest_page_path)
+
+func _on_file_tree_item_edited() -> void:
+	var new_name := file_tree.get_edited().get_text(0)
+	
+	if not new_name.is_valid_filename():
+		printerr("Invalid page name: ", new_name)
+		return
+	
+	var item_page_path := str(file_tree.get_edited().get_metadata(0))
+	var new_page_path := item_page_path.get_base_dir().path_join(new_name)
+	
+	if _move_page(item_page_path, new_page_path):
+		rescan_page_files()
+		open_page(new_page_path)
+	else:
+		rescan_page_files()
+
+func _move_page(src_page_path: String, dest_page_path: String) -> bool:
+	var src_dir := get_page_dir(src_page_path)
 	var dest_dir := get_page_dir(dest_page_path)
 	if DirAccess.dir_exists_absolute(dest_dir):
-		printerr("Cannot move page, destination dir already exists: %s => %s" % [dir, dest_dir])
-		return
+		printerr("Cannot move/rename page, destination dir already exists: %s => %s" % [src_dir, dest_dir])
+		return false
 	if FileAccess.file_exists(dest_dir):
-		printerr("Cannot move page, file with same name exists at destination: %s => %s" % [dir, dest_dir])
-		return
-	var err := DirAccess.rename_absolute(dir, dest_dir)
+		printerr("Cannot move/rename page, file with same name exists at destination: %s => %s" % [src_dir, dest_dir])
+		return false
+	var err: int
+	if src_page_path.get_file() != dest_page_path.get_file():
+		var dest_file := src_dir.path_join(dest_page_path.get_file() + PAGE_FILE_EXT)
+		if FileAccess.file_exists(dest_file):
+			printerr("Cannot move/rename page, unrecognized file would be overwritten: %s" % [dest_file])
+			return false
+		var src_file := get_page_filepath(src_page_path)
+		err = DirAccess.rename_absolute(src_file, dest_file)
+		if err != OK:
+			printerr("Failed to move page: %s (%s => %s)" % [error_string(err), src_file, dest_file])
+			return false
+	err = DirAccess.rename_absolute(src_dir, dest_dir)
 	if err != OK:
-		printerr("Failed to move page: %s (%s => %s)" % [error_string(err), dir, dest_dir])
-		return
+		printerr("Failed to move page: %s (%s => %s)" % [error_string(err), src_dir, dest_dir])
+		return false
+	return true
+
+func _on_file_tree_delete_requested(item: TreeItem) -> void:
+	delete_page_dialog.path_label.text = item.get_metadata(0)
+	delete_page_dialog.show()
+
+func _on_delete_page_dialog_confirmed() -> void:
+	var page_path: String = delete_page_dialog.path_label.text
+	OS.move_to_trash(ProjectSettings.globalize_path(get_page_dir(page_path)))
+	var open_parent = page_path == current_page.path
 	rescan_page_files()
-	open_page(dest_page_path)
+	if open_parent:
+		open_page(page_path.get_base_dir())
 
 #endregion
 
@@ -291,16 +334,6 @@ func _on_file_tree_item_moved(item: TreeItem, target: TreeItem) -> void:
 
 func _on_edit_page_button_pressed() -> void:
 	show_edit_view()
-
-func _on_delete_page_button_pressed() -> void:
-	delete_page_dialog.path_label.text = current_page.path
-	delete_page_dialog.show()
-
-func _on_delete_page_dialog_confirmed() -> void:
-	var parent_path := current_page.path.get_base_dir()
-	OS.move_to_trash(ProjectSettings.globalize_path(get_page_dir(current_page.path)))
-	rescan_page_files()
-	open_page(parent_path)
 
 func _on_document_rich_text_label_meta_clicked(meta: Variant) -> void:
 	var url := str(meta)
@@ -413,3 +446,4 @@ class Page:
 	var images: String
 	var tree_item: TreeItem
 	var subpages: PackedStringArray
+
