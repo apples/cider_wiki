@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cwik24430m7o8"]
+[gd_scene load_steps=18 format=3 uid="uid://cwik24430m7o8"]
 
 [ext_resource type="Script" path="res://addons/cider_wiki/wiki_tab.gd" id="1_0r4nw"]
 [ext_resource type="Theme" uid="uid://vn685as2raec" path="res://addons/cider_wiki/cider_theme.tres" id="1_rghra"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://addons/cider_wiki/delete_page_dialog.gd" id="4_ifmwh"]
 [ext_resource type="Script" path="res://addons/cider_wiki/file_tree.gd" id="5_qv0ui"]
 [ext_resource type="Texture2D" uid="uid://cu128yd18oopc" path="res://addons/cider_wiki/icons/icon_edit.svg" id="5_vff41"]
+[ext_resource type="Script" path="res://addons/cider_wiki/search.gd" id="6_2qqxh"]
 [ext_resource type="Script" path="res://addons/cider_wiki/code_edit.gd" id="6_6krtk"]
 [ext_resource type="Texture2D" uid="uid://clpvdovipfmqb" path="res://addons/cider_wiki/icons/icon_delete.svg" id="6_nel21"]
 [ext_resource type="Texture2D" uid="uid://0emc4p7m7kmc" path="res://addons/cider_wiki/icons/icon_save.svg" id="8_njsno"]
@@ -70,53 +71,119 @@ size_flags_vertical = 3
 hide_root = true
 script = ExtResource("5_qv0ui")
 
-[node name="Document" type="MarginContainer" parent="Splitter"]
+[node name="DocumentContainer" type="VBoxContainer" parent="Splitter"]
 layout_mode = 2
 
-[node name="RenderedView" type="PanelContainer" parent="Splitter/Document"]
+[node name="Search" type="PanelContainer" parent="Splitter/DocumentContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("6_2qqxh")
+
+[node name="SearchBar" type="HBoxContainer" parent="Splitter/DocumentContainer/Search"]
+layout_mode = 2
+
+[node name="SearchLineEdit" type="LineEdit" parent="Splitter/DocumentContainer/Search/SearchBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search"
+clear_button_enabled = true
+
+[node name="RegexFlagButton" type="Button" parent="Splitter/DocumentContainer/Search/SearchBar"]
+layout_mode = 2
+toggle_mode = true
+text = ".*"
+
+[node name="SearchPopupPanel" type="PopupPanel" parent="Splitter/DocumentContainer/Search"]
+
+[node name="ResultsContainer" type="VBoxContainer" parent="Splitter/DocumentContainer/Search/SearchPopupPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MessageContainer" type="CenterContainer" parent="Splitter/DocumentContainer/Search/SearchPopupPanel/ResultsContainer"]
+layout_mode = 2
+
+[node name="Message" type="Label" parent="Splitter/DocumentContainer/Search/SearchPopupPanel/ResultsContainer/MessageContainer"]
+layout_mode = 2
+text = "Searching..."
+
+[node name="ResultsTree" type="Tree" parent="Splitter/DocumentContainer/Search/SearchPopupPanel/ResultsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+hide_root = true
+
+[node name="Document" type="MarginContainer" parent="Splitter/DocumentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RenderedView" type="PanelContainer" parent="Splitter/DocumentContainer/Document"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="DocumentMarginContainer" type="MarginContainer" parent="Splitter/Document/RenderedView"]
+[node name="DocumentMarginContainer" type="MarginContainer" parent="Splitter/DocumentContainer/Document/RenderedView"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"DocumentMarginContainer"
 
-[node name="DocumentRichTextLabel" type="RichTextLabel" parent="Splitter/Document/RenderedView/DocumentMarginContainer"]
+[node name="DocumentRichTextLabel" type="RichTextLabel" parent="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
+auto_translate = false
 focus_mode = 2
 bbcode_enabled = true
+context_menu_enabled = true
 selection_enabled = true
 
-[node name="Buttons" type="VBoxContainer" parent="Splitter/Document/RenderedView"]
+[node name="MetaLabelContainer" type="PanelContainer" parent="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 1.0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="MetaLabel" type="Label" parent="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel/MetaLabelContainer"]
+layout_mode = 2
+auto_translate = false
+
+[node name="Buttons" type="VBoxContainer" parent="Splitter/DocumentContainer/Document/RenderedView"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="EditPageButton" type="Button" parent="Splitter/Document/RenderedView/Buttons"]
+[node name="EditPageButton" type="Button" parent="Splitter/DocumentContainer/Document/RenderedView/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Edit the current page."
 text = "Edit Page"
 icon = ExtResource("5_vff41")
 
-[node name="DeletePageButton" type="Button" parent="Splitter/Document/RenderedView/Buttons"]
+[node name="DeletePageButton" type="Button" parent="Splitter/DocumentContainer/Document/RenderedView/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Delete the current page."
 icon = ExtResource("6_nel21")
 
-[node name="EditView" type="PanelContainer" parent="Splitter/Document"]
+[node name="EditView" type="PanelContainer" parent="Splitter/DocumentContainer/Document"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="EditContainer" type="HBoxContainer" parent="Splitter/Document/EditView"]
+[node name="EditContainer" type="HBoxContainer" parent="Splitter/DocumentContainer/Document/EditView"]
 layout_mode = 2
 
-[node name="DocumentCodeEdit" type="CodeEdit" parent="Splitter/Document/EditView/EditContainer"]
+[node name="DocumentCodeEdit" type="CodeEdit" parent="Splitter/DocumentContainer/Document/EditView/EditContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -133,37 +200,37 @@ auto_brace_completion_pairs = {
 }
 script = ExtResource("6_6krtk")
 
-[node name="Buttons" type="VBoxContainer" parent="Splitter/Document/EditView/EditContainer"]
+[node name="Buttons" type="VBoxContainer" parent="Splitter/DocumentContainer/Document/EditView/EditContainer"]
 layout_mode = 2
 
-[node name="SaveEditButton" type="Button" parent="Splitter/Document/EditView/EditContainer/Buttons"]
+[node name="SaveEditButton" type="Button" parent="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons"]
 layout_mode = 2
 tooltip_text = "Save page."
 shortcut = SubResource("Shortcut_mjlnd")
 text = "Save"
 icon = ExtResource("8_njsno")
 
-[node name="CancelEditButton" type="Button" parent="Splitter/Document/EditView/EditContainer/Buttons"]
+[node name="CancelEditButton" type="Button" parent="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Discard changes."
 icon = ExtResource("9_mhjoc")
 
-[node name="HelpEditButton" type="Button" parent="Splitter/Document/EditView/EditContainer/Buttons"]
+[node name="HelpEditButton" type="Button" parent="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 8
 tooltip_text = "Discard changes."
 icon = ExtResource("10_dtosf")
 
-[node name="HelpOverlay" type="CenterContainer" parent="Splitter/Document"]
+[node name="HelpOverlay" type="CenterContainer" parent="Splitter/DocumentContainer/Document"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="Splitter/Document/HelpOverlay"]
+[node name="PanelContainer" type="PanelContainer" parent="Splitter/DocumentContainer/Document/HelpOverlay"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_nmdn1")
 
-[node name="HelpRichTextLabel" type="RichTextLabel" parent="Splitter/Document/HelpOverlay/PanelContainer"]
+[node name="HelpRichTextLabel" type="RichTextLabel" parent="Splitter/DocumentContainer/Document/HelpOverlay/PanelContainer"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 bbcode_enabled = true
@@ -189,7 +256,7 @@ Links to other files will show them in the FileSystem.
 Try drag-n-dropping things into the document."
 fit_content = true
 
-[node name="CloseHelpButton" type="Button" parent="Splitter/Document/HelpOverlay/PanelContainer/HelpRichTextLabel"]
+[node name="CloseHelpButton" type="Button" parent="Splitter/DocumentContainer/Document/HelpOverlay/PanelContainer/HelpRichTextLabel"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -263,15 +330,21 @@ Continue?"
 [connection signal="pressed" from="Splitter/FileTreeContainer/CreatePageButton" to="." method="_on_create_page_button_pressed"]
 [connection signal="pressed" from="Splitter/FileTreeContainer/CreateChildPageButton" to="." method="_on_create_child_page_button_pressed"]
 [connection signal="item_activated" from="Splitter/FileTreeContainer/FileTree" to="." method="_on_file_tree_item_activated"]
-[connection signal="meta_clicked" from="Splitter/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_clicked"]
-[connection signal="pressed" from="Splitter/Document/RenderedView/Buttons/EditPageButton" to="." method="_on_edit_page_button_pressed"]
-[connection signal="pressed" from="Splitter/Document/RenderedView/Buttons/DeletePageButton" to="." method="_on_delete_page_button_pressed"]
-[connection signal="text_changed" from="Splitter/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_changed"]
-[connection signal="text_set" from="Splitter/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_set"]
-[connection signal="pressed" from="Splitter/Document/EditView/EditContainer/Buttons/SaveEditButton" to="." method="_on_save_edit_button_pressed"]
-[connection signal="pressed" from="Splitter/Document/EditView/EditContainer/Buttons/CancelEditButton" to="." method="_on_cancel_edit_button_pressed"]
-[connection signal="pressed" from="Splitter/Document/EditView/EditContainer/Buttons/HelpEditButton" to="." method="_on_help_edit_button_pressed"]
-[connection signal="pressed" from="Splitter/Document/HelpOverlay/PanelContainer/HelpRichTextLabel/CloseHelpButton" to="." method="_on_close_help_button_pressed"]
+[connection signal="text_changed" from="Splitter/DocumentContainer/Search/SearchBar/SearchLineEdit" to="Splitter/DocumentContainer/Search" method="_on_search_line_edit_text_changed"]
+[connection signal="text_submitted" from="Splitter/DocumentContainer/Search/SearchBar/SearchLineEdit" to="Splitter/DocumentContainer/Search" method="_on_search_line_edit_text_submitted"]
+[connection signal="popup_hide" from="Splitter/DocumentContainer/Search/SearchPopupPanel" to="Splitter/DocumentContainer/Search" method="_on_search_popup_panel_popup_hide"]
+[connection signal="item_activated" from="Splitter/DocumentContainer/Search/SearchPopupPanel/ResultsContainer/ResultsTree" to="Splitter/DocumentContainer/Search" method="_on_results_tree_item_activated"]
+[connection signal="meta_clicked" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_clicked"]
+[connection signal="meta_hover_ended" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_hover_ended"]
+[connection signal="meta_hover_started" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_hover_started"]
+[connection signal="pressed" from="Splitter/DocumentContainer/Document/RenderedView/Buttons/EditPageButton" to="." method="_on_edit_page_button_pressed"]
+[connection signal="pressed" from="Splitter/DocumentContainer/Document/RenderedView/Buttons/DeletePageButton" to="." method="_on_delete_page_button_pressed"]
+[connection signal="text_changed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_changed"]
+[connection signal="text_set" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_set"]
+[connection signal="pressed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons/SaveEditButton" to="." method="_on_save_edit_button_pressed"]
+[connection signal="pressed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons/CancelEditButton" to="." method="_on_cancel_edit_button_pressed"]
+[connection signal="pressed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons/HelpEditButton" to="." method="_on_help_edit_button_pressed"]
+[connection signal="pressed" from="Splitter/DocumentContainer/Document/HelpOverlay/PanelContainer/HelpRichTextLabel/CloseHelpButton" to="." method="_on_close_help_button_pressed"]
 [connection signal="confirmed" from="CreatePageDialog" to="." method="_on_create_page_dialog_confirmed"]
 [connection signal="visibility_changed" from="CreatePageDialog" to="CreatePageDialog" method="_on_visibility_changed"]
 [connection signal="text_changed" from="CreatePageDialog/Form/PageNameLineEdit" to="CreatePageDialog" method="_on_page_name_line_edit_text_changed"]

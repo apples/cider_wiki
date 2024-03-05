@@ -13,10 +13,16 @@ func horse():
 	return 42
 [/code]
 
-We got images:
+[table=3]
+[cell border=white]
+  We got images:  
 
 [img]res://icon.svg[/img]
+[/cell]
 
-And we even got some embedded images!
+[cell border=white]
+  And we even got some embedded images!  
 
 [[img:img_1.png]]
+[/cell]
+[/table]

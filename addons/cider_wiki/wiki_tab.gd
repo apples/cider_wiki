@@ -22,12 +22,16 @@ var _pending_open_page_path: String
 @onready var edit_view: Control = %EditView
 @onready var help_overlay: CenterContainer = %HelpOverlay
 @onready var close_help_button: Button = %CloseHelpButton
-
+@onready var search: Control = %Search
+@onready var meta_label_container: PanelContainer = %MetaLabelContainer
+@onready var meta_label: Label = %MetaLabelContainer/MetaLabel
 
 func _ready() -> void:
 	if Engine.is_editor_hint() and EditorInterface.get_edited_scene_root() == self:
 		return
+	search.wiki_tab = self
 	rendered_view.add_theme_stylebox_override("panel", document_rich_text_label.get_theme_stylebox("normal"))
+	meta_label_container.add_theme_stylebox_override("panel", get_theme_stylebox("PanelForeground", "EditorStyles"))
 	var root := Page.new()
 	root.path = "/"
 	page_collection["/"] = root
@@ -144,6 +148,7 @@ func reset_views() -> void:
 	edit_view.hide()
 	help_overlay.show()
 	close_help_button.hide()
+	meta_label_container.hide()
 
 #endregion
 
@@ -185,7 +190,7 @@ func rescan_page_files() -> void:
 	
 	var scan_queue := [root]
 	while not scan_queue.is_empty():
-		var parent_page: Page = scan_queue.pop_back()
+		var parent_page: Page = scan_queue.pop_front()
 		var dir_path := DATA_DIR.path_join(parent_page.path)
 		parent_page.subpages = get_subpages(parent_page.path)
 		for page_name: String in parent_page.subpages:
@@ -201,6 +206,11 @@ func rescan_page_files() -> void:
 			page.tree_item = tree_item
 			page_collection[page_path] = page
 			scan_queue.append(page)
+	
+	if current_page.path in page_collection:
+		open_page(current_page.path)
+	else:
+		reset_views()
 
 func preload_all_images(image_dir: String) -> Array[ImageTexture]:
 	if not DirAccess.dir_exists_absolute(image_dir):
@@ -316,6 +326,15 @@ func _on_document_rich_text_label_meta_clicked(meta: Variant) -> void:
 	else:
 		OS.shell_open(url)
 
+func _on_document_rich_text_label_meta_hover_started(meta: Variant) -> void:
+	meta_label.text = str(meta)
+	meta_label_container.show()
+
+
+func _on_document_rich_text_label_meta_hover_ended(meta: Variant) -> void:
+	meta_label.text = ""
+	meta_label_container.hide()
+
 #endregion
 
 
@@ -375,4 +394,3 @@ class Page:
 	var images: String
 	var tree_item: TreeItem
 	var subpages: PackedStringArray
-
