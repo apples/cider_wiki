@@ -1,7 +1,7 @@
 @tool
 extends Control
 
-const DATA_DIR = "res://cider_wiki_data"
+const DATA_DIR = "res://cider_wiki_pages"
 const PAGE_FILE_EXT = ".txt"
 
 var current_page: Page = null
@@ -188,6 +188,10 @@ func rescan_page_files() -> void:
 	root.tree_item = file_tree.create_item()
 	root.tree_item.set_metadata(0, "/")
 	page_collection["/"] = root
+	
+	if not DirAccess.dir_exists_absolute(DATA_DIR):
+		reset_views()
+		return
 	
 	var scan_queue := [root]
 	while not scan_queue.is_empty():
