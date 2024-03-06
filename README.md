@@ -19,9 +19,10 @@ Other file types will simply be highlighted in the FileSystem panel.
 
 Simply copy this project's `addons` folder into your project.
 
-When you create your first page, a `cider_wiki_pages` directory will be created
-in your project. This directory won't be visible in Godot, but make sure to
-commit it with your code! Treat it as you would any other documentation files.
+When you create your first page, a `res://cider_wiki_pages` directory will be
+created in your project. This directory won't be visible in Godot, but make
+sure to commit it with your code! Treat it as you would any other documentation
+files.
 
 ## Editing pages
 
@@ -129,7 +130,8 @@ BBCode editor instead of showing the rendered page.
 
 ## Page data structure
 
-Each page is represented by a directory in the `cider_wiki_pages` directory.
+Each page is represented by a directory in the `res://cider_wiki_pages`
+directory.
 
 Within a page's directory, there will be a `.txt` file sharing the same name.
 This file is a simple text file contianing the BBCode document.
@@ -140,15 +142,15 @@ embedded images which were pasted into the document.
 Sub-pages are stored within their parent page's directory.
 
 > [!IMPORTANT]
-> Make sure to commit and backup the entire `cider_wiki_pages` directory!
+> Make sure to commit and backup the entire `res://cider_wiki_pages` directory!
 
 ## Configuration
 
 There really isn't much to configure.
 
-If desired, you can change the `cider_wiki_pages` directory name and location
-by editing `addons/cider_wiki/wiki_tab.gd`. At the top, set the `DATA_DIR`
-constant to your desired location.
+If desired, you can change the `res://cider_wiki_pages` directory name and
+location by editing `addons/cider_wiki/wiki_tab.gd`. At the top, set the
+`DATA_DIR` constant to your desired location.
 
 [bbcode]: https://docs.godotengine.org/en/stable/tutorials/ui/bbcode_in_richtextlabel.html#reference
 [godot-regex]: https://docs.godotengine.org/en/stable/classes/class_regex.html
