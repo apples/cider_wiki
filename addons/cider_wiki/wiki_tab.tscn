@@ -375,6 +375,7 @@ Continue?"
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons/SaveEditButton" to="." method="_on_save_edit_button_pressed"]
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons/CancelEditButton" to="." method="_on_cancel_edit_button_pressed"]
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/Buttons/HelpEditButton" to="." method="_on_help_edit_button_pressed"]
+[connection signal="meta_clicked" from="Splitter/DocumentContainer/Document/HelpOverlay/PanelContainer/HelpRichTextLabel" to="." method="_on_help_rich_text_label_meta_clicked"]
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/HelpOverlay/PanelContainer/HelpRichTextLabel/CloseHelpButton" to="." method="_on_close_help_button_pressed"]
 [connection signal="confirmed" from="CreatePageDialog" to="." method="_on_create_page_dialog_confirmed"]
 [connection signal="visibility_changed" from="CreatePageDialog" to="CreatePageDialog" method="_on_visibility_changed"]
