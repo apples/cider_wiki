@@ -1,3 +1,5 @@
+![icon](icon.svg)
+
 # Cider Wiki
 
 This Godot plugin adds a Wiki tab to the editor,
