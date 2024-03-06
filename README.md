@@ -19,12 +19,17 @@ Other file types will simply be highlighted in the FileSystem panel.
 
 ## Installation
 
+> [!TIP]
+> This plugin can be installed via the [AssetLib][assetlib].
+
 Simply copy this project's `addons` folder into your project.
 
+Enable the plugin in `Project -> Project Settings -> Plugins`.
+
 When you create your first page, a `res://cider_wiki_pages` directory will be
-created in your project. This directory won't be visible in Godot, but make
-sure to commit it with your code! Treat it as you would any other documentation
-files.
+created in your project. It contains all the data for your pages.
+This directory won't be visible in Godot, but make sure to commit it with your
+code! Treat it as you would any other documentation files.
 
 ## Editing pages
 
@@ -157,3 +162,5 @@ location by editing `addons/cider_wiki/wiki_tab.gd`. At the top, set the
 [bbcode]: https://docs.godotengine.org/en/stable/tutorials/ui/bbcode_in_richtextlabel.html#reference
 [godot-regex]: https://docs.godotengine.org/en/stable/classes/class_regex.html
 [pcre2-reference]: https://www.pcre.org/current/doc/html/pcre2pattern.html
+[assetlib]: https://godotengine.org/asset-library/asset/2656
+
