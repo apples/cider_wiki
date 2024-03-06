@@ -112,6 +112,7 @@ Deleted pages are sent to your operating system's Recycle Bin.
 ![demonstration of searching](screenshots/screenshot4.webp)
 
 The search bar can be used to find text in all pages.
+Double-clicking a result will take you to it.
 
 Normally, the search will look for literal matches to the input,
 case insensitive.
@@ -121,6 +122,10 @@ regular expression syntax in the input. This uses Godot's [RegEx][godot-regex]
 class to search files, full reference [here][pcre2-reference]. The regex will
 automatically be prefixed with the flags `(?im)` (case-insensitive, multiline).
 To disable these, you can use `(?^)` or `(?-i)` at the start of your search.
+
+Toggling the `[/]` button will search the raw BBCode of the page instead of the
+rendered output. Double-clicking a result will take you to that line in the
+BBCode editor instead of showing the rendered page.
 
 ## Page data structure
 
