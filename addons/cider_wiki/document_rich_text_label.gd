@@ -12,6 +12,8 @@ var _highlight_t: float = 1.0: set = _set_highlight_t
 @onready var meta_label: Label = $MetaLabelContainer/MetaLabel
 
 func _ready() -> void:
+	if Engine.is_editor_hint() and EditorInterface.get_edited_scene_root() and EditorInterface.get_edited_scene_root().is_ancestor_of(self):
+		return
 	meta_label_container.add_theme_stylebox_override("panel", get_theme_stylebox("PanelForeground", "EditorStyles"))
 
 func _draw() -> void:
