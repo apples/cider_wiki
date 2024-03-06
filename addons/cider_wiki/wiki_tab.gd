@@ -291,6 +291,9 @@ func _on_file_tree_item_edited() -> void:
 	var item_page_path := str(file_tree.get_edited().get_metadata(0))
 	var new_page_path := item_page_path.get_base_dir().path_join(new_name)
 	
+	if item_page_path == new_page_path:
+		return
+	
 	if _move_page(item_page_path, new_page_path):
 		rescan_page_files()
 		open_page(new_page_path)
