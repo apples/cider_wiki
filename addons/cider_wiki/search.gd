@@ -16,6 +16,7 @@ var _page_items: Dictionary = {} # { [page_name: String]: TreeItem }
 @onready var message: Label = $SearchPopupPanel/ResultsContainer/MessageContainer/Message
 @onready var results_tree: Tree = $SearchPopupPanel/ResultsContainer/ResultsTree
 @onready var regex_flag_button: Button = $SearchBar/RegexFlagButton
+@onready var source_flag_button: Button = $SearchBar/SourceFlagButton
 
 func _ready() -> void:
 	set_process(false)
@@ -38,13 +39,22 @@ func _process(delta: float) -> void:
 	if page.path == "/":
 		return
 	
-	var page_text := FileAccess.get_file_as_string(page.file)
+	var raw_page_text := FileAccess.get_file_as_string(page.file)
 	if FileAccess.get_open_error() != OK:
 		printerr("Failed to search page: ", page.path)
 		return
 	
+	var searched_page_text := raw_page_text
+	if not source_flag_button.button_pressed:
+		var fake_images := wiki_tab.preload_all_images(page.images, true)
+		var rtl := RichTextLabel.new()
+		rtl.auto_translate = false
+		rtl.parse_bbcode(wiki_tab.enhance_bbcode(page, raw_page_text))
+		searched_page_text = rtl.get_parsed_text()
+		rtl.free()
+	
 	var name_match := _search_regex.search(page.name)
-	var matches := _search_regex.search_all(page_text)
+	var matches := _search_regex.search_all(searched_page_text)
 	if name_match == null and matches.is_empty():
 		return
 	
@@ -54,36 +64,40 @@ func _process(delta: float) -> void:
 		_page_items[page.path] = page_item
 		page_item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
 		page_item.set_text(0, page.path)
-		page_item.set_metadata(0, {
-			page_path = page.path,
-			match_text = name_match.get_string(),
-			match_start = name_match.get_start() + page.path.get_base_dir().path_join("").length(),
-		})
+		if name_match:
+			page_item.set_metadata(0, {
+				page_path = page.path,
+				match_text = name_match.get_string(),
+				match_start = name_match.get_start() + page.path.get_base_dir().path_join("").length(),
+			})
+		else:
+			page_item.set_metadata(0, { page_path = page.path })
 		page_item.set_custom_draw(0, self, "_match_item_custom_draw")
 		page_item.set_custom_color(0, results_tree.get_theme_color("font_color") * Color(1, 1, 1, 0.67))
 	
 	for m: RegExMatch in matches:
 		var label := RichTextLabel.new()
-		var line_start := page_text.rfind("\n", m.get_start()) + 1
-		var line_end := posmod(page_text.find("\n", m.get_end()), page_text.length() + 1)
-		var line_number := page_text.count("\n", 0, line_start)
-		var line_text := page_text.substr(line_start, line_end - line_start)
-		var line_number_text := "%s: " % [line_number]
+		var line_start := searched_page_text.rfind("\n", m.get_start()) + 1
+		var line_end := posmod(searched_page_text.find("\n", m.get_end()), searched_page_text.length() + 1)
+		var line_number := searched_page_text.count("\n", 0, line_start) if line_start > 0 else 0
+		var line_text := searched_page_text.substr(line_start, line_end - line_start)
+		var line_number_text := "%s: " % [line_number + 1]
 		var match_item := results_tree.create_item(page_item)
 		match_item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
 		match_item.set_text(0, line_number_text + line_text)
 		match_item.set_metadata(0, {
 			line_number = line_number,
+			char_index = m.get_start(),
 			match_text = m.get_string(),
 			match_start = line_number_text.length() + m.get_start() - line_start,
 		})
 		match_item.set_custom_draw(0, self, "_match_item_custom_draw")
 
 func start_search():
-	var regex_pattern := search_line_edit.text
 	if not regex_flag_button.button_pressed:
-		regex_pattern = "(?i)" + escape_chars.sub(regex_pattern, "\\$0", true)
-	_search_regex = RegEx.create_from_string(search_line_edit.text)
+		_search_regex = RegEx.create_from_string("(?i)" + escape_chars.sub(search_line_edit.text, "\\$0", true))
+	else:
+		_search_regex = RegEx.create_from_string("(?mi)" + search_line_edit.text)
 	if not _search_regex.is_valid():
 		add_theme_color_override("font_color", Color.RED)
 		_search_regex = null
@@ -121,9 +135,20 @@ func _on_results_tree_item_activated() -> void:
 		wiki_tab.open_page(results_tree.get_selected().get_metadata(0).page_path)
 	else:
 		wiki_tab.open_page(results_tree.get_selected().get_parent().get_metadata(0).page_path)
-		wiki_tab.document_rich_text_label.scroll_to_line(results_tree.get_selected().get_metadata(0).line_number)
+		if source_flag_button.button_pressed:
+			wiki_tab.show_edit_view()
+			wiki_tab.document_code_edit.set_caret_line(int(results_tree.get_selected().get_metadata(0).line_number))
+			wiki_tab.document_code_edit.grab_focus()
+		else:
+			var rtl_line := wiki_tab.document_rich_text_label.get_character_line(results_tree.get_selected().get_metadata(0).char_index)
+			wiki_tab.document_rich_text_label.highlight_line(rtl_line)
+			wiki_tab.document_rich_text_label.grab_focus()
+	search_popup_panel.hide.call_deferred()
 
 func _match_item_custom_draw(tree_item: TreeItem, rect: Rect2) -> void:
+	if "match_text" not in tree_item.get_metadata(0):
+		return
+	
 	var font := results_tree.get_theme_font("font")
 	var font_size := results_tree.get_theme_font_size("font_size")
 	var accent_color := results_tree.get_theme_color("accent_color", "Editor")

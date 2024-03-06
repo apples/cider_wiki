@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cwik24430m7o8"]
+[gd_scene load_steps=19 format=3 uid="uid://cwik24430m7o8"]
 
 [ext_resource type="Script" path="res://addons/cider_wiki/wiki_tab.gd" id="1_0r4nw"]
 [ext_resource type="Theme" uid="uid://vn685as2raec" path="res://addons/cider_wiki/cider_theme.tres" id="1_rghra"]
@@ -10,9 +10,23 @@
 [ext_resource type="Texture2D" uid="uid://cu128yd18oopc" path="res://addons/cider_wiki/icons/icon_edit.svg" id="5_vff41"]
 [ext_resource type="Script" path="res://addons/cider_wiki/search.gd" id="6_2qqxh"]
 [ext_resource type="Script" path="res://addons/cider_wiki/code_edit.gd" id="6_6krtk"]
+[ext_resource type="Script" path="res://addons/cider_wiki/document_rich_text_label.gd" id="7_l8en4"]
 [ext_resource type="Texture2D" uid="uid://0emc4p7m7kmc" path="res://addons/cider_wiki/icons/icon_save.svg" id="8_njsno"]
 [ext_resource type="Texture2D" uid="uid://ce1rsxmc5h5mq" path="res://addons/cider_wiki/icons/icon_cancel.svg" id="9_mhjoc"]
 [ext_resource type="Texture2D" uid="uid://deqrmlvsuqmm3" path="res://addons/cider_wiki/icons/icon_help.svg" id="10_dtosf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k6ri5"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 0.365, 0.365, 1)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_detail = 1
 
 [sub_resource type="InputEventKey" id="InputEventKey_xj4q1"]
 device = -1
@@ -102,6 +116,12 @@ tooltip_text = "Enables RegEx in the search bar."
 toggle_mode = true
 text = ".*"
 
+[node name="SourceFlagButton" type="Button" parent="Splitter/DocumentContainer/Search/SearchBar"]
+layout_mode = 2
+tooltip_text = "Searches within the BBCode directly."
+toggle_mode = true
+text = "[/]"
+
 [node name="SearchPopupPanel" type="PopupPanel" parent="Splitter/DocumentContainer/Search"]
 
 [node name="ResultsContainer" type="VBoxContainer" parent="Splitter/DocumentContainer/Search/SearchPopupPanel"]
@@ -150,9 +170,9 @@ focus_mode = 2
 bbcode_enabled = true
 context_menu_enabled = true
 selection_enabled = true
+script = ExtResource("7_l8en4")
 
 [node name="MetaLabelContainer" type="PanelContainer" parent="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel"]
-unique_name_in_owner = true
 visible = false
 layout_mode = 1
 anchors_preset = 2
@@ -162,6 +182,7 @@ offset_top = -23.0
 offset_right = 1.0
 grow_vertical = 0
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_k6ri5")
 
 [node name="MetaLabel" type="Label" parent="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel/MetaLabelContainer"]
 layout_mode = 2
@@ -345,9 +366,9 @@ Continue?"
 [connection signal="text_submitted" from="Splitter/DocumentContainer/Search/SearchBar/SearchLineEdit" to="Splitter/DocumentContainer/Search" method="_on_search_line_edit_text_submitted"]
 [connection signal="popup_hide" from="Splitter/DocumentContainer/Search/SearchPopupPanel" to="Splitter/DocumentContainer/Search" method="_on_search_popup_panel_popup_hide"]
 [connection signal="item_activated" from="Splitter/DocumentContainer/Search/SearchPopupPanel/ResultsContainer/ResultsTree" to="Splitter/DocumentContainer/Search" method="_on_results_tree_item_activated"]
-[connection signal="meta_clicked" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_clicked"]
-[connection signal="meta_hover_ended" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_hover_ended"]
-[connection signal="meta_hover_started" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="." method="_on_document_rich_text_label_meta_hover_started"]
+[connection signal="meta_clicked" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" method="_on_meta_clicked"]
+[connection signal="meta_hover_ended" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" method="_on_meta_hover_ended"]
+[connection signal="meta_hover_started" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" method="_on_meta_hover_started"]
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/RenderedView/Buttons/EditPageButton" to="." method="_on_edit_page_button_pressed"]
 [connection signal="text_changed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_changed"]
 [connection signal="text_set" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_set"]

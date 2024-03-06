@@ -107,6 +107,21 @@ Right-clicking a page will open a popup menu to rename or delete the page.
 
 Deleted pages are sent to your operating system's Recycle Bin.
 
+### Searching
+
+![demonstration of searching](screenshots/screenshot4.webp)
+
+The search bar can be used to find text in all pages.
+
+Normally, the search will look for literal matches to the input,
+case insensitive.
+
+Toggling the `.*` button to the right of the search input will enable/disable
+regular expression syntax in the input. This uses Godot's [RegEx][godot-regex]
+class to search files, full reference [here][pcre2-reference]. The regex will
+automatically be prefixed with the flags `(?im)` (case-insensitive, multiline).
+To disable these, you can use `(?^)` or `(?-i)` at the start of your search.
+
 ## Page data structure
 
 Each page is represented by a directory in the `cider_wiki_pages` directory.
@@ -131,4 +146,5 @@ by editing `addons/cider_wiki/wiki_tab.gd`. At the top, set the `DATA_DIR`
 constant to your desired location.
 
 [bbcode]: https://docs.godotengine.org/en/stable/tutorials/ui/bbcode_in_richtextlabel.html#reference
-
+[godot-regex]: https://docs.godotengine.org/en/stable/classes/class_regex.html
+[pcre2-reference]: https://www.pcre.org/current/doc/html/pcre2pattern.html

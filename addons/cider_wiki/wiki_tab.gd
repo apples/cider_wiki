@@ -8,8 +8,8 @@ var current_page: Page = null
 
 var page_collection := {} # { [page_path: String]: Page }
 
-var _preloaded_images: Array[ImageTexture]
-
+var _preloaded_images: Dictionary
+var _fake_image := Image.create(1, 1, false, Image.FORMAT_RGBA8)
 var _pending_open_page_path: String
 
 @onready var file_tree: Tree = %FileTree
@@ -23,15 +23,13 @@ var _pending_open_page_path: String
 @onready var help_overlay: CenterContainer = %HelpOverlay
 @onready var close_help_button: Button = %CloseHelpButton
 @onready var search: Control = %Search
-@onready var meta_label_container: PanelContainer = %MetaLabelContainer
-@onready var meta_label: Label = %MetaLabelContainer/MetaLabel
 
 func _ready() -> void:
 	if Engine.is_editor_hint() and EditorInterface.get_edited_scene_root() == self:
 		return
 	search.wiki_tab = self
+	document_rich_text_label.wiki_tab = self
 	rendered_view.add_theme_stylebox_override("panel", document_rich_text_label.get_theme_stylebox("normal"))
-	meta_label_container.add_theme_stylebox_override("panel", get_theme_stylebox("PanelForeground", "EditorStyles"))
 	var root := Page.new()
 	root.path = "/"
 	page_collection["/"] = root
@@ -59,7 +57,6 @@ func open_page(page_path: String) -> void:
 	current_page = page
 	
 	document_rich_text_label.text = ""
-	_preloaded_images = []
 	_preloaded_images = preload_all_images(page.images) # needed for the RichTextLabel to find the images
 	var rich_page_text := enhance_bbcode(page, raw_page_text)
 	document_rich_text_label.text = rich_page_text
@@ -139,7 +136,7 @@ func show_edit_view() -> void:
 	help_overlay.hide()
 
 func reset_views() -> void:
-	_preloaded_images = []
+	_preloaded_images = {}
 	current_page = page_collection["/"]
 	document_rich_text_label.text = ""
 	document_code_edit.text = ""
@@ -148,7 +145,7 @@ func reset_views() -> void:
 	edit_view.hide()
 	help_overlay.show()
 	close_help_button.hide()
-	meta_label_container.hide()
+	document_rich_text_label.meta_label_container.hide()
 
 #endregion
 
@@ -217,19 +214,26 @@ func rescan_page_files() -> void:
 	else:
 		reset_views()
 
-func preload_all_images(image_dir: String) -> Array[ImageTexture]:
+func preload_all_images(image_dir: String, fake: bool = false) -> Dictionary:
 	if not DirAccess.dir_exists_absolute(image_dir):
-		return []
-	var textures: Array[ImageTexture] = []
+		return {}
+	var textures: Dictionary = {}
 	for image_file: String in DirAccess.get_files_at(image_dir):
 		var img_path := image_dir.path_join(image_file)
-		var img := Image.load_from_file(img_path)
-		if not img:
-			printerr("Bad image: ", img_path)
+		if img_path in _preloaded_images:
+			textures[img_path] = _preloaded_images[img_path]
 			continue
-		var texture := ImageTexture.create_from_image(img)
+		var texture: Texture2D
+		if not fake:
+			var img := Image.load_from_file(img_path)
+			if not img:
+				printerr("Bad image: ", img_path)
+				continue
+			texture = ImageTexture.create_from_image(img)
+		else:
+			texture = ImageTexture.create_from_image(_fake_image)
 		texture.take_over_path(img_path)
-		textures.append(texture)
+		textures[img_path] = texture
 	return textures
 
 #endregion
@@ -338,58 +342,6 @@ func _on_delete_page_dialog_confirmed() -> void:
 
 func _on_edit_page_button_pressed() -> void:
 	show_edit_view()
-
-func _on_document_rich_text_label_meta_clicked(meta: Variant) -> void:
-	var url := str(meta)
-	if url.begins_with("cider:"):
-		var page_path: String = make_absolute(url.substr(6))
-		if page_path in page_collection:
-			open_page(page_path)
-		else:
-			create_page_dialog.path_label.text = page_path.get_base_dir().path_join("")
-			create_page_dialog.page_name_line_edit.text = page_path.get_file()
-			create_page_dialog.show()
-	elif url.begins_with("res:"):
-		var parts := url.rsplit("#", true, 1)
-		var path := parts[0]
-		var fragment := parts[1] if parts.size() == 2 else ""
-		match path.get_extension():
-			"tscn", "scn":
-				EditorInterface.open_scene_from_path(path)
-				if fragment != "":
-					var node := EditorInterface.get_edited_scene_root().get_node_or_null(fragment)
-					if not node:
-						printerr("Node not found in scene: ", url)
-					else:
-						EditorInterface.get_selection().clear()
-						EditorInterface.edit_node(node)
-			"gd":
-				var script := ResourceLoader.load(path, "Script") as Script
-				var line := -1
-				if fragment.is_valid_int():
-					line = fragment.to_int()
-				elif fragment != "":
-					var regex := RegEx.create_from_string("(?m)^((static\\s+)?func|(static\\s+)?var|@onready var|@export[^\n]*var)\\s+%s[^a-zA-Z0-9_]" % [fragment])
-					var reg_m := regex.search(script.source_code)
-					if not reg_m:
-						printerr("Member not found in script: ", url)
-					else:
-						line = 1 + script.source_code.count("\n", 0, reg_m.get_start())
-				EditorInterface.set_main_screen_editor("Script")
-				EditorInterface.edit_script(script, line)
-			_:
-				EditorInterface.select_file(path)
-	else:
-		OS.shell_open(url)
-
-func _on_document_rich_text_label_meta_hover_started(meta: Variant) -> void:
-	meta_label.text = str(meta)
-	meta_label_container.show()
-
-
-func _on_document_rich_text_label_meta_hover_ended(meta: Variant) -> void:
-	meta_label.text = ""
-	meta_label_container.hide()
 
 #endregion
 
