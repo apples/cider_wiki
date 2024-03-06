@@ -13,7 +13,7 @@ When a page has a link to a scene or script file,
 clicking that link will open that scene/script for editing.
 Other file types will simply be highlighted in the FileSystem panel.
 
-![full screenshot of wiki](screenshots/screenshot1.webp)
+![full screenshot of wiki](screenshots/screenshot1.png)
 
 ## Installation
 
