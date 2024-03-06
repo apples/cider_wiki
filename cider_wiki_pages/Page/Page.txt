@@ -23,6 +23,6 @@ func horse():
 [cell border=white]
   And we even got some embedded images!  
 
-[[img:img_1.png]]
+[[img:img_1.webp]]
 [/cell]
 [/table]

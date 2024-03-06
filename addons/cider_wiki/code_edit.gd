@@ -49,7 +49,7 @@ func _paste(caret_index: int) -> void:
 		var image_path: String
 		var i := 1
 		while i <= 512:
-			image_name = "img_" + str(i) + ".png"
+			image_name = "img_" + str(i) + ".webp"
 			image_path = page.images.path_join(image_name)
 			if not FileAccess.file_exists(image_path):
 				break
@@ -59,7 +59,7 @@ func _paste(caret_index: int) -> void:
 			printerr("Failed to save pasted image (too many?): ", page.images)
 			return
 		var img := DisplayServer.clipboard_get_image()
-		err = img.save_png(image_path)
+		err = img.save_webp(image_path)
 		if err != OK:
 			printerr("Failed to save pasted image: %s (%s)" % [error_string(err), image_path])
 			return
