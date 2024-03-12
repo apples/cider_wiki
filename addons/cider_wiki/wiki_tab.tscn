@@ -130,8 +130,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = -416.0
-offset_bottom = -416.0
+offset_right = 96.0
+offset_bottom = 96.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -213,6 +213,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 auto_translate = false
 placeholder_text = "BBCode"
+wrap_mode = 1
+autowrap_mode = 2
 scroll_smooth = true
 caret_blink = true
 highlight_current_line = true
@@ -369,6 +371,7 @@ Continue?"
 [connection signal="meta_clicked" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" method="_on_meta_clicked"]
 [connection signal="meta_hover_ended" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" method="_on_meta_hover_ended"]
 [connection signal="meta_hover_started" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" method="_on_meta_hover_started"]
+[connection signal="resized" from="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" to="Splitter/DocumentContainer/Document/RenderedView/DocumentMarginContainer/DocumentRichTextLabel" method="_on_resized"]
 [connection signal="pressed" from="Splitter/DocumentContainer/Document/RenderedView/Buttons/EditPageButton" to="." method="_on_edit_page_button_pressed"]
 [connection signal="text_changed" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_changed"]
 [connection signal="text_set" from="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" to="Splitter/DocumentContainer/Document/EditView/EditContainer/DocumentCodeEdit" method="_on_text_set"]

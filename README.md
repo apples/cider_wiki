@@ -52,7 +52,8 @@ Here are all the supported extension tags:
 | `[[>Cool SubPage]]` | Creates a link to a sub-page of this one.
 | `[[/Path/To/Page]]` | Creates a link to a page with an absolute path.
 | `[[page:As Above]]` | Same as any other page link, the `path:` part is simply optional.
-| `[[img:img_1.png]]` | Displays an embedded image (see below).
+| `[[img:img_1.png]]` | Displays a pasted image.
+| `[[code:gd]] [[/]]` | Displays a block of code with syntax highlighting.
 
 ### Page links to non-existing pages
 
@@ -92,6 +93,17 @@ Example: `[url]res://player_character.gd#_process[/url]`
 
 Otherwise, for any other file type, the file will be selected in the
 FileSystem panel.
+
+### Code blocks
+
+Use the `[[code:gd]]` tag to start a code block, and `[[/]]` to end it. e.g.:
+
+```
+[[code:gd]]
+func _ready():
+	print("Hello, world!")
+[[/]]
+```
 
 ### Drag-n-drop
 

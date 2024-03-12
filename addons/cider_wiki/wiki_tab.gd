@@ -58,44 +58,12 @@ func open_page(page_path: String) -> void:
 	
 	document_rich_text_label.text = ""
 	_preloaded_images = preload_all_images(page.images) # needed for the RichTextLabel to find the images
-	var rich_page_text := enhance_bbcode(page, raw_page_text)
-	document_rich_text_label.text = rich_page_text
+	document_rich_text_label.set_page(page, raw_page_text)
 	document_code_edit.text = raw_page_text
 	document_code_edit.page = page
 	document_code_edit.is_dirty = false
 	page.tree_item.select(0)
 	show_render_view()
-
-func enhance_bbcode(page: Page, page_text: String) -> String:
-	var compiled := "[b][font_size=20]%s[/font_size][/b]\n\n" % [page.name]
-	
-	var i: int = 0
-	while i < page_text.length():
-		var j := page_text.find("[[", i)
-		if j == -1:
-			compiled += page_text.substr(i)
-			break
-		
-		var k := page_text.find("]]", j + 2)
-		if k == -1:
-			compiled += page_text.substr(i)
-			break
-		
-		compiled += page_text.substr(i, j - i)
-		
-		var tag_text := page_text.substr(j + 2, k - (j + 2))
-		if tag_text.begins_with("img:"):
-			tag_text = tag_text.trim_prefix("img:")
-			compiled += "[img]%s[/img]" % [str(page.images).path_join(tag_text)]
-		elif tag_text.begins_with("page:"):
-			tag_text = tag_text.trim_prefix("page:")
-			compiled += "[url=cider:%s]%s[/url]" % [tag_text, tag_text.get_file().trim_prefix(">")]
-		else:
-			compiled += "[url=cider:%s]%s[/url]" % [tag_text, tag_text.get_file().trim_prefix(">")]
-		
-		i = k + 2
-	
-	return compiled
 
 
 #region Page path operations

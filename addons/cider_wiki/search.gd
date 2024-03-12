@@ -2,6 +2,7 @@
 extends Control
 
 const WikiTab = preload("wiki_tab.gd")
+const DocumentRichTextLabel = preload("res://addons/cider_wiki/document_rich_text_label.gd")
 
 static var escape_chars := RegEx.create_from_string("[\\\\.\\^$*+?()\\[\\]{}|]")
 
@@ -47,10 +48,13 @@ func _process(delta: float) -> void:
 	var searched_page_text := raw_page_text
 	if not source_flag_button.button_pressed:
 		var fake_images := wiki_tab.preload_all_images(page.images, true)
-		var rtl := RichTextLabel.new()
+		var rtl := DocumentRichTextLabel.new()
 		rtl.auto_translate = false
-		rtl.parse_bbcode(wiki_tab.enhance_bbcode(page, raw_page_text))
+		var parsed: Array = rtl.enhance_bbcode(page, raw_page_text)
+		rtl.parse_bbcode(parsed[0])
 		searched_page_text = rtl.get_parsed_text()
+		for i: int in parsed[1].size():
+			searched_page_text = searched_page_text.replace("_{code_block %s}" % i, parsed[1][i].code_edit.text.replace("\n", "\\n"))
 		rtl.free()
 	
 	var name_match := _search_regex.search(page.name)
