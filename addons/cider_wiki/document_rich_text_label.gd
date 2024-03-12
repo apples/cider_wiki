@@ -64,7 +64,7 @@ func set_page(page: WikiTab.Page, page_text: String) -> void:
 	var enhanced_bbcode: String = res[0]
 	_code_blocks = res[1]
 	text = enhanced_bbcode
-	_update_code_blocks.call_deferred(true)
+	_update_code_blocks(true)
 
 func highlight_line(line: int) -> void:
 	_highlight_line = line
@@ -138,6 +138,7 @@ func _get_line_rect(line: int) -> Rect2:
 		Vector2(size.x, get_line_offset(_highlight_line + 1) - line_ofs + 2))
 
 func _update_code_blocks(reset: bool = false) -> void:
+	await get_tree().process_frame
 	for i in _code_blocks.size():
 		var c: Dictionary = _code_blocks[i]
 		if reset:
@@ -145,6 +146,7 @@ func _update_code_blocks(reset: bool = false) -> void:
 			c.pos_y = get_line_offset(line + 1) - c.code_edit.get_minimum_size().y + 2
 		c.code_edit.position.y = c.pos_y - get_v_scroll_bar().value
 		c.code_edit.size.x = size.x - (get_v_scroll_bar().size.x - 2 if get_v_scroll_bar().visible else 0)
+		c.code_edit.size.y = c.code_edit.get_minimum_size().y
 
 func _on_meta_clicked(meta: Variant) -> void:
 	var url := str(meta)
@@ -201,4 +203,4 @@ func _on_v_scroll_bar_value_changed(value: float) -> void:
 	_update_code_blocks()
 
 func _on_resized() -> void:
-	_update_code_blocks.call_deferred(true)
+	_update_code_blocks(true)
