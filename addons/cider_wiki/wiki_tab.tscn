@@ -214,7 +214,6 @@ size_flags_horizontal = 3
 auto_translate = false
 placeholder_text = "BBCode"
 wrap_mode = 1
-autowrap_mode = 2
 scroll_smooth = true
 caret_blink = true
 highlight_current_line = true

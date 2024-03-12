@@ -99,7 +99,6 @@ func enhance_bbcode(page: WikiTab.Page, page_text: String) -> Array:
 			if l == -1:
 				l = page_text.length()
 			var snippet_text := page_text.substr(k + 2, l - (k + 2)).trim_prefix("\n").trim_suffix("\n")
-			var snippet_line_count := snippet_text.split("\n", true).size() + 1
 			var code_edit := CodeEdit.new()
 			code_edit.editable = false
 			code_edit.gutters_draw_line_numbers = true
@@ -139,12 +138,11 @@ func _get_line_rect(line: int) -> Rect2:
 		Vector2(size.x, get_line_offset(_highlight_line + 1) - line_ofs + 2))
 
 func _update_code_blocks(reset: bool = false) -> void:
-	print("_update_code_blocks ", reset)
 	for i in _code_blocks.size():
 		var c: Dictionary = _code_blocks[i]
 		if reset:
-			var line := get_character_line(get_parsed_text().find("{code_block %s}" % i))
-			c.pos_y = get_line_offset(line + 1) - c.code_edit.get_minimum_size().y
+			var line := get_character_line(get_parsed_text().find("_{code_block %s}" % i))
+			c.pos_y = get_line_offset(line + 1) - c.code_edit.get_minimum_size().y + 2
 		c.code_edit.position.y = c.pos_y - get_v_scroll_bar().value
 		c.code_edit.size.x = size.x - (get_v_scroll_bar().size.x - 2 if get_v_scroll_bar().visible else 0)
 
@@ -203,5 +201,4 @@ func _on_v_scroll_bar_value_changed(value: float) -> void:
 	_update_code_blocks()
 
 func _on_resized() -> void:
-	print("resized")
 	_update_code_blocks.call_deferred(true)
